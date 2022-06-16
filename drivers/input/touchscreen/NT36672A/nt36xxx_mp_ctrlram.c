@@ -1700,7 +1700,7 @@ static int32_t nvt_selftest_open(struct inode *inode, struct file *file)
 
 #if NVT_TOUCH_MP_SETTING_CRITERIA_FROM_CSV
 	//---Check if MP Setting Criteria CSV file exist and load---
-	snprintf(mp_setting_criteria_csv_filename, PAGE_SIZE, "NT36xxx_MP_Setting_Criteria_%04X.csv", ts->nvt_pid);
+        snprintf(mp_setting_criteria_csv_filename, sizeof(mpcriteria), "NT36xxx_MP_Setting_Criteria_%04X.csv", ts->nvt_pid);
 	NVT_LOG("MP setting criteria csv filename: %s\n", mp_setting_criteria_csv_filename);
 	if (nvt_load_mp_setting_criteria_from_csv(mp_setting_criteria_csv_filename) < 0) {
 		NVT_ERR("SelfTest MP setting criteria CSV file not exist or load failed\n");
@@ -1715,7 +1715,7 @@ static int32_t nvt_selftest_open(struct inode *inode, struct file *file)
 			 * Ex. nvt_pid = 500A
 			 *     mpcriteria = "novatek-mp-criteria-500A"
 			 */
-			snprintf(mpcriteria, PAGE_SIZE, "novatek-mp-criteria-%04X", ts->nvt_pid);
+			snprintf(mpcriteria, sizeof(mpcriteria), "novatek-mp-criteria-%04X", ts->nvt_pid);
 
 			if (nvt_mp_parse_dt(np, mpcriteria)) {
 				//---Download Normal FW---
@@ -2108,7 +2108,7 @@ static int nvt_short_test(void)
 
 #if NVT_TOUCH_MP_SETTING_CRITERIA_FROM_CSV
 	//---Check if MP Setting Criteria CSV file exist and load---
-	snprintf(mp_setting_criteria_csv_filename, PAGE_SIZE, "NT36xxx_MP_Setting_Criteria_%04X.csv", ts->nvt_pid);
+	snprintf(mp_setting_criteria_csv_filename, sizeof(mpcriteria), "NT36xxx_MP_Setting_Criteria_%04X.csv", ts->nvt_pid);
 	NVT_LOG("MP setting criteria csv filename: %s\n", mp_setting_criteria_csv_filename);
 	if (nvt_load_mp_setting_criteria_from_csv(mp_setting_criteria_csv_filename) < 0) {
 		NVT_ERR("SelfTest MP setting criteria CSV file not exist or load failed\n");
@@ -2123,14 +2123,14 @@ static int nvt_short_test(void)
 			 * Ex. nvt_pid = 500A
 			 *     mpcriteria = "novatek-mp-criteria-500A"
 			 */
-			snprintf(mpcriteria, PAGE_SIZE, "novatek-mp-criteria-%04X", ts->nvt_pid);
+			snprintf(mpcriteria, sizeof(mpcriteria), "novatek-mp-criteria-%04X", ts->nvt_pid);
 
 			if (nvt_mp_parse_dt(np, mpcriteria)) {
 				//---Download Normal FW---
 				if (nvt_get_dbgfw_status()) {
 					if (nvt_update_firmware(DEFAULT_DEBUG_FW_NAME) < 0) {
 						NVT_ERR("use built-in fw");
-						nvt_update_firmware(ts->fw_name);
+			                        nvt_update_firmware(ts->fw_name);
 					}
 				} else {
 					nvt_update_firmware(ts->fw_name);
@@ -2230,7 +2230,7 @@ static int nvt_open_test(void)
 
 #if NVT_TOUCH_MP_SETTING_CRITERIA_FROM_CSV
 	//---Check if MP Setting Criteria CSV file exist and load---
-	snprintf(mp_setting_criteria_csv_filename, PAGE_SIZE, "NT36xxx_MP_Setting_Criteria_%04X.csv", ts->nvt_pid);
+	snprintf(mp_setting_criteria_csv_filename, sizeof(mpcriteria), "NT36xxx_MP_Setting_Criteria_%04X.csv", ts->nvt_pid);
 	NVT_LOG("MP setting criteria csv filename: %s\n", mp_setting_criteria_csv_filename);
 	if (nvt_load_mp_setting_criteria_from_csv(mp_setting_criteria_csv_filename) < 0) {
 		NVT_ERR("SelfTest MP setting criteria CSV file not exist or load failed\n");
@@ -2245,7 +2245,7 @@ static int nvt_open_test(void)
 			 * Ex. nvt_pid = 500A
 			 *     mpcriteria = "novatek-mp-criteria-500A"
 			 */
-			snprintf(mpcriteria, PAGE_SIZE, "novatek-mp-criteria-%04X", ts->nvt_pid);
+			snprintf(mpcriteria, sizeof(mpcriteria), "novatek-mp-criteria-%04X", ts->nvt_pid);
 
 			if (nvt_mp_parse_dt(np, mpcriteria)) {
 				//---Download Normal FW---
