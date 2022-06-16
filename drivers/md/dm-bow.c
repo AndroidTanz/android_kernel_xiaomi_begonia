@@ -12,7 +12,6 @@
 #include <linux/module.h>
 
 #define DM_MSG_PREFIX "bow"
-#define SECTOR_SIZE 512
 
 struct log_entry {
 	u64 source;
@@ -103,12 +102,12 @@ sector_t range_top(struct bow_range *br)
 
 u64 range_size(struct bow_range *br)
 {
-	return (range_top(br) - br->sector) * SECTOR_SIZE;
+	return (range_top(br) - br->sector) * 512;
 }
 
 static sector_t bvec_top(struct bvec_iter *bi_iter)
 {
-	return bi_iter->bi_sector + bi_iter->bi_size / SECTOR_SIZE;
+	return bi_iter->bi_sector + bi_iter->bi_size / 512;
 }
 
 /*
@@ -196,7 +195,7 @@ static int split_range(struct bow_context *bc, struct bow_range **br,
 
 	if (bvec_top(bi_iter) >= range_top(*br)) {
 		bi_iter->bi_size = (range_top(*br) - (*br)->sector)
-					* SECTOR_SIZE;
+					* 512;
 		return BLK_STS_OK;
 	}
 
@@ -887,10 +886,10 @@ static void bow_write(struct work_struct *work)
 	mutex_lock(&bc->ranges_lock);
 	do {
 		ret = prepare_one_range(bc, &bi_iter);
-		bi_iter.bi_sector += bi_iter.bi_size / SECTOR_SIZE;
+		bi_iter.bi_sector += bi_iter.bi_size / 512;
 		bi_iter.bi_size = bio->bi_iter.bi_size
 			- (bi_iter.bi_sector - bio->bi_iter.bi_sector)
-			  * SECTOR_SIZE;
+			  * 512;
 	} while (!ret && bi_iter.bi_size);
 
 	mutex_unlock(&bc->ranges_lock);
@@ -979,10 +978,10 @@ static int add_trim(struct bow_context *bc, struct bio *bio)
 			break;
 		}
 
-		bi_iter.bi_sector += bi_iter.bi_size / SECTOR_SIZE;
+		bi_iter.bi_sector += bi_iter.bi_size / 512;
 		bi_iter.bi_size = bio->bi_iter.bi_size
 			- (bi_iter.bi_sector - bio->bi_iter.bi_sector)
-			  * SECTOR_SIZE;
+			  * 512;
 
 	} while (bi_iter.bi_size);
 
@@ -1018,10 +1017,10 @@ static int remove_trim(struct bow_context *bc, struct bio *bio)
 			break;
 		}
 
-		bi_iter.bi_sector += bi_iter.bi_size / SECTOR_SIZE;
+		bi_iter.bi_sector += bi_iter.bi_size / 512;
 		bi_iter.bi_size = bio->bi_iter.bi_size
 			- (bi_iter.bi_sector - bio->bi_iter.bi_sector)
-			  * SECTOR_SIZE;
+			  * 512;
 
 	} while (bi_iter.bi_size);
 
